@@ -1,8 +1,8 @@
 # yuyakezora_shooting
 enchant.jsでゲームを作ってみました。
 
-#main.js
+###main.js
 ゲーム実行処理はここに記載しています。
 
-#ranking.js
+###ranking.js
 ランキングを表示する処理はここに記載しています。
