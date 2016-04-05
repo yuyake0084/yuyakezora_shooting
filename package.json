@@ -1,0 +1,23 @@
+{
+  "name": "yuyakezora_shooting",
+  "version": "1.0.0",
+  "description": "enchant.jsでゲームを作ってみました。",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/U-0084/yuyakezora_shooting.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/U-0084/yuyakezora_shooting/issues"
+  },
+  "homepage": "https://github.com/U-0084/yuyakezora_shooting#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2"
+  }
+}
