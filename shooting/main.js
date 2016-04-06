@@ -11,55 +11,65 @@ const SCREEN_HEIGHT= 550;
 const BUTTLE_AREA = 440;
 
 // プレイヤー
-var PLAYER_WIDTH = 32;
-var PLAYER_HEIGHT = 32;
-var PLAYER_SPEED = 5;
+const PLAYER_WIDTH = 32;
+const PLAYER_HEIGHT = 32;
+const PLAYER_SPEED = 5;
 
 // 敵
-var ENEMY_WIDTH = 32;
-var ENEMY_HEIGHT = 32;
-var ENEMY_SPEED = 0.5;
-var ENEMY_CREATE_INTERVAL = 5;
+const ENEMY_WIDTH = 32;
+const ENEMY_HEIGHT = 32;
+const ENEMY_SPEED = 0.5;
+const ENEMY_CREATE_INTERVAL = 5;
 
 // 銃弾
-var BULLET_WIDTH = 16;
-var BULLET_HEIGHT = 16;
-var BULLET_SPEED = 10;
+const BULLET_WIDTH = 16;
+const BULLET_HEIGHT = 16;
+const BULLET_SPEED = 10;
 
 // 敵の攻撃
-var FIRE_WIDTH = 16;
-var FIRE_HEIGHT = 16;
-var FIRE_SPEED = 10;
+const FIRE_WIDTH = 16;
+const FIRE_HEIGHT = 16;
+const FIRE_SPEED = 10;
 
-// 爆発
-var EXPLOSION_WIDTH = 16;
-var EXPLOSION_HEIGHT = 16;
+/*
+ * 爆発
+ */
+const EXPLOSION_WIDTH = 16;
+const EXPLOSION_HEIGHT = 16;
 
-// ライフ
-var LIFE_WIDTH = 16;
-var LIFE_HEIGHT = 16;
+/*
+ * ライフ
+ */
+const LIFE_WIDTH = 16;
+const LIFE_HEIGHT = 16;
 
-// 音楽
-var BATTLE_BGM = 'bgm/Swordland.mp3';
-var PLAYER_BULLET_BGM = 'bgm/player_bullet.mp3';
-var GAMEOVER_BGM = 'bgm/failed.mp3';
-var DAMAGE_BGM = 'bgm/damage.mp3';
+/*
+ * BGM
+ */
+const BATTLE_BGM = 'bgm/Swordland.mp3';
+const PLAYER_BULLET_BGM = 'bgm/player_bullet.mp3';
+const GAMEOVER_BGM = 'bgm/failed.mp3';
+const DAMAGE_BGM = 'bgm/damage.mp3';
 
-//画像
-var START_IMAGE = 'images/start.png';
-var END_IMAGE = 'images/end.png';
-var CLEAR_IMAGE = 'http://yuyake0084.sakura.ne.jp/wp/wp-content/themes/theme-yuyakezora/game/shooting/images/clear.png';
-var MAP_IMAGE01 = 'http://yuyake0084.sakura.ne.jp/wp/wp-content/themes/theme-yuyakezora/game/shooting/images/map.png';
-var BULLET_IMAGE = 'http://yuyake0084.sakura.ne.jp/wp/wp-content/themes/theme-yuyakezora/game/shooting/images/icon0.png';
-var LIFE_IMAGE = 'http://yuyake0084.sakura.ne.jp/wp/wp-content/themes/theme-yuyakezora/game/shooting/images/icon0.png';
-var PLAYER_IMAGE = 'http://yuyake0084.sakura.ne.jp/wp/wp-content/themes/theme-yuyakezora/game/shooting/images/player.png';
-var ENEMY_IMAGE01 = 'http://yuyake0084.sakura.ne.jp/wp/wp-content/themes/theme-yuyakezora/game/shooting/images/enemy01.png';
-var EXPLOSION_IMAGE = 'http://yuyake0084.sakura.ne.jp/wp/wp-content/themes/theme-yuyakezora/game/shooting/images/effect0.png';
-var FIRE_IMAGE = 'http://yuyake0084.sakura.ne.jp/wp/wp-content/themes/theme-yuyakezora/game/shooting/images/icon0.png';
-var PAD = 'http://yuyake0084.sakura.ne.jp/wp/wp-content/themes/theme-yuyakezora/game/shooting/images/pad.png';
+/*
+ * IMAGE
+ */
+const START_IMAGE = 'images/start.png';
+const END_IMAGE = 'images/end.png';
+const CLEAR_IMAGE = 'http://yuyake0084.sakura.ne.jp/wp/wp-content/themes/theme-yuyakezora/game/shooting/images/clear.png';
+const MAP_IMAGE01 = 'http://yuyake0084.sakura.ne.jp/wp/wp-content/themes/theme-yuyakezora/game/shooting/images/map.png';
+const BULLET_IMAGE = 'http://yuyake0084.sakura.ne.jp/wp/wp-content/themes/theme-yuyakezora/game/shooting/images/icon0.png';
+const LIFE_IMAGE = 'http://yuyake0084.sakura.ne.jp/wp/wp-content/themes/theme-yuyakezora/game/shooting/images/icon0.png';
+const PLAYER_IMAGE = 'http://yuyake0084.sakura.ne.jp/wp/wp-content/themes/theme-yuyakezora/game/shooting/images/player.png';
+const ENEMY_IMAGE01 = 'http://yuyake0084.sakura.ne.jp/wp/wp-content/themes/theme-yuyakezora/game/shooting/images/enemy01.png';
+const EXPLOSION_IMAGE = 'http://yuyake0084.sakura.ne.jp/wp/wp-content/themes/theme-yuyakezora/game/shooting/images/effect0.png';
+const FIRE_IMAGE = 'http://yuyake0084.sakura.ne.jp/wp/wp-content/themes/theme-yuyakezora/game/shooting/images/icon0.png';
+const PAD = 'http://yuyake0084.sakura.ne.jp/wp/wp-content/themes/theme-yuyakezora/game/shooting/images/pad.png';
 
-//アセット
-var ASSETS = [
+/*
+ * 素材配列
+ */
+const ASSETS = [
 	START_IMAGE,
 	END_IMAGE,
 	CLEAR_IMAGE,
@@ -77,9 +87,6 @@ var ASSETS = [
 	DAMAGE_BGM
 ];
 
-/*
-* グローバル変数
-*/
 
 var game = null;
 var player = null;
@@ -88,14 +95,14 @@ var enemyList = null;
 var fireList = null;
 
 // Array 拡張
-Array.prototype.erase = function(elm) {
+Array.prototype.erase = (elm) => {
 	var index = this.indexOf(elm);
 	this.splice(index, 1);
 	return this;
 };
 
 // ランダム値生成
-var randfloat = function(min, max) {
+var randfloat = (min, max) => {
 	return Math.random() * (max-min)+min;
 };
 
@@ -104,12 +111,12 @@ var randfloat = function(min, max) {
  */
 if(window.GamepadEvent){
 	// ゲームパッドを接続すると実行されるイベント
-	window.addEventListener("gamepadconnected",function(e){
+	window.addEventListener("gamepadconnected",(e) => {
 		console.log("接続されました。");
 		console.log(e.gamepad);
 	});
 	// ゲームパッドの接続を解除すると実行されるイベント
-	window.addEventListener("gamepaddisconnected",function(e){
+	window.addEventListener("gamepaddisconnected",(e) => {
 		console.log("接続が解除されました。");
 		console.log(e.gamepad);
 	});

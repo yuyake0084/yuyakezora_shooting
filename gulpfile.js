@@ -1,15 +1,15 @@
-'use strict';
-
 var gulp = require('gulp');
 var babel = require('gulp-babel');
+var plumber = require('gulp-plumber');
 var connect = require('gulp-connect');
 var browserSync = require('browser-sync');
 var reload = browserSync.reload;
+var uglify = require('gulp-uglify');
 
 /*
  * 変更を監視してブラウザリロード
  */
-gulp.task('serve', function () {
+gulp.task('serve', () => {
 	browserSync({
 		server: {
 			baseDir: './shooting/**/*.js'
@@ -20,29 +20,42 @@ gulp.task('serve', function () {
 /*
  * localhostサーバー
  */
-gulp.task('connect', function () {
+gulp.task('connect', () => {
 	connect.server({
 		root: './',
 		livereload: true
 	});
 });
 
-gulp.task('html', function () {
+gulp.task('html', () => {
 	gulp.src('./*.html').pipe(connect.reload());
 });
 
 /*
  * Babel
  */
-gulp.task('babel', function () {
-	gulp.src('./*.js').pipe(babel()).pipe(gulp.dest('./'));
+gulp.task('babel', () => {
+	return gulp.src('./shooting/main.js')
+	.pipe(plumber())
+	.pipe(babel({
+		presets: ['es2015']
+	}))
+	.pipe(gulp.dest('./dist'));
 });
 
 /*
  * ファイルの変更を監視
  */
-gulp.task('watch', function () {
-	gulp.watch('./*.js', './*.html', ['babel']);
+gulp.task('watch', () => {
+	gulp.watch(src, './*.js', './*.html', ['babel']);
 });
 
-gulp.task('default', ['connect', 'serve', 'babel', 'watch']);
+/*
+ * ミニファイ化
+ */
+gulp.task('uglify', () => {
+	gulp.src('./');
+});
+
+
+gulp.task('default', ['connect', 'babel', 'watch']);
