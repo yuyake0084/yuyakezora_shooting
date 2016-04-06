@@ -6,9 +6,9 @@ enchant();
 */
 
 // パラメーター
-var SCREEN_WIDTH = 380;
-var SCREEN_HEIGHT= 550;
-var BUTTLE_AREA = 440;
+const SCREEN_WIDTH = 380;
+const SCREEN_HEIGHT= 550;
+const BUTTLE_AREA = 440;
 
 // プレイヤー
 var PLAYER_WIDTH = 32;
@@ -18,7 +18,7 @@ var PLAYER_SPEED = 5;
 // 敵
 var ENEMY_WIDTH = 32;
 var ENEMY_HEIGHT = 32;
-var ENEMY_SPEED = .5;
+var ENEMY_SPEED = 0.5;
 var ENEMY_CREATE_INTERVAL = 5;
 
 // 銃弾
@@ -40,14 +40,14 @@ var LIFE_WIDTH = 16;
 var LIFE_HEIGHT = 16;
 
 // 音楽
-var BATTLE_BGM = 'http://yuyake0084.sakura.ne.jp/wp/wp-content/themes/theme-yuyakezora/game/shooting/bgm/Swordland.mp3';
-var PLAYER_BULLET_BGM = 'http://yuyake0084.sakura.ne.jp/wp/wp-content/themes/theme-yuyakezora/game/shooting/bgm/player_bullet.mp3';
-var GAMEOVER_BGM = 'http://yuyake0084.sakura.ne.jp/wp/wp-content/themes/theme-yuyakezora/game/shooting/bgm/failed.mp3';
-var DAMAGE_BGM = 'http://yuyake0084.sakura.ne.jp/wp/wp-content/themes/theme-yuyakezora/game/shooting/bgm/damage.mp3';
+var BATTLE_BGM = 'bgm/Swordland.mp3';
+var PLAYER_BULLET_BGM = 'bgm/player_bullet.mp3';
+var GAMEOVER_BGM = 'bgm/failed.mp3';
+var DAMAGE_BGM = 'bgm/damage.mp3';
 
 //画像
-var START_IMAGE = 'http://yuyake0084.sakura.ne.jp/wp/wp-content/themes/theme-yuyakezora/game/shooting/images/start.png';
-var END_IMAGE = 'http://yuyake0084.sakura.ne.jp/wp/wp-content/themes/theme-yuyakezora/game/shooting/images/end.png';
+var START_IMAGE = 'images/start.png';
+var END_IMAGE = 'images/end.png';
 var CLEAR_IMAGE = 'http://yuyake0084.sakura.ne.jp/wp/wp-content/themes/theme-yuyakezora/game/shooting/images/clear.png';
 var MAP_IMAGE01 = 'http://yuyake0084.sakura.ne.jp/wp/wp-content/themes/theme-yuyakezora/game/shooting/images/map.png';
 var BULLET_IMAGE = 'http://yuyake0084.sakura.ne.jp/wp/wp-content/themes/theme-yuyakezora/game/shooting/images/icon0.png';
