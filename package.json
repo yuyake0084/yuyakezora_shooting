@@ -27,5 +27,10 @@
   },
   "dependencies": {
     "gulp-connect": "^3.2.2"
+  },
+  "babel": {
+    "presets": [
+      "es2015"
+    ]
   }
 }

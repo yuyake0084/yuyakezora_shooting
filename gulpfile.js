@@ -1,21 +1,23 @@
-var gulp = require('gulp');
-var babel = require('gulp-babel');
-var plumber = require('gulp-plumber');
-var connect = require('gulp-connect');
-var browserSync = require('browser-sync');
-var reload = browserSync.reload;
-var uglify = require('gulp-uglify');
+
+const gulp = require('gulp');
+const babel = require('gulp-babel');
+const plumber = require('gulp-plumber');
+const connect = require('gulp-connect');
+const browserSync = require('browser-sync');
+const uglify = require('gulp-uglify');
+
+const reload = browserSync.reload();
 
 /*
  * 変更を監視してブラウザリロード
  */
-gulp.task('serve', () => {
-	browserSync({
+gulp.task('browserSync', () => {
+	browserSync.init(null, {
 		server: {
-			baseDir: './shooting/*'
+			baseDir: './'
 		}
 	});
-	gulp.watch(['./**/'], reload);
+	gulp.watch(['./app/**'], reload);
 });
 
 /*
@@ -23,7 +25,7 @@ gulp.task('serve', () => {
  */
 gulp.task('connect', () => {
 	connect.server({
-		root: './',
+		root: 'app',
 		livereload: true
 	});
 });
@@ -36,7 +38,7 @@ gulp.task('html', () => {
  * Babel
  */
 gulp.task('babel', () => {
-	return gulp.src('./shooting/main.js')
+	return gulp.src('./app/main.js')
 	.pipe(plumber())
 	.pipe(babel({
 		presets: ['es2015']
@@ -59,4 +61,4 @@ gulp.task('uglify', () => {
 });
 
 
-gulp.task('default', ['serve', 'connect', 'babel', 'watch']);
+gulp.task('default', ['browserSync', 'connect', 'babel', 'watch']);

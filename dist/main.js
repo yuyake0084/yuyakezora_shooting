@@ -163,7 +163,7 @@ window.onload = function () {
 		var konami = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65];
 		$(window).keyup(function (e) {
 			input.push(e.keyCode);
-			if (input.toString().indexOf(konami) >= 0 || gamepad.buttons[1].pressed) {
+			if (input.toString().indexOf(konami) >= 0) {
 				var _PLAYER_SPEED = 15;
 				game.fps = 10;
 			}
@@ -305,11 +305,6 @@ window.onload = function () {
 					this.x -= Math.sin(this.age * 0.1);
 					this.y += ENEMY_SPEED;
 					this.frame = this.age % 3 + 3;
-					// 					this.tl.moveBy(rand(10),  rand(50), 0, enchant.Easing.BOUNCE_EASEOUT)
-					// 					   .moveBy(+rand(10), -rand(50), +rand(10))
-					// 					   .fadeOut(10)
-					// 					   .fadeIn(100)
-					// 					   .loop();
 
 					// 削除処理
 					if (this.destroy === true) {
