@@ -4,6 +4,7 @@ const babel = require('gulp-babel');
 const plumber = require('gulp-plumber');
 const connect = require('gulp-connect');
 const browserSync = require('browser-sync');
+const webserver = require('gulp-webserver');
 const uglify = require('gulp-uglify');
 
 const reload = browserSync.reload();
@@ -11,13 +12,23 @@ const reload = browserSync.reload();
 /*
  * 変更を監視してブラウザリロード
  */
-gulp.task('browserSync', () => {
+gulp.task('browser-sync', () => {
 	browserSync.init(null, {
 		server: {
 			baseDir: './'
 		}
 	});
 	gulp.watch(['./app/**'], reload);
+});
+
+gulp.task('webserver', () => {
+	gulp.src('./app')
+		.pipe(webserver({
+			host: 'localhost',
+			port: 8080,
+			livereload: true
+		})
+	);
 });
 
 /*
@@ -61,4 +72,4 @@ gulp.task('uglify', () => {
 });
 
 
-gulp.task('default', ['browserSync', 'connect', 'babel', 'watch']);
+gulp.task('default', ['browser-sync', 'connect', 'babel', 'watch']);
