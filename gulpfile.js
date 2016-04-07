@@ -2,7 +2,6 @@
 const gulp = require('gulp');
 const babel = require('gulp-babel');
 const plumber = require('gulp-plumber');
-const connect = require('gulp-connect');
 const webserver = require('gulp-webserver');
 const uglify = require('gulp-uglify');
 
@@ -13,7 +12,7 @@ const uglify = require('gulp-uglify');
  * open: true（実行と同時に）
  */
 gulp.task('webserver', function() {
-	gulp.src('./app')
+	gulp.src('./')
 		.pipe(webserver({
 			host: 'localhost',
 			port: 8080,
@@ -24,16 +23,6 @@ gulp.task('webserver', function() {
 	);
 });
 
-/*
- * localhostサーバー
- */
-gulp.task('connect', function() {
-	connect.server({
-		root: './app',
-		livereload: true
-	});
-});
-
 gulp.task('html', function() {
 	gulp.src('./*.html').pipe(connect.reload());
 });
@@ -42,12 +31,12 @@ gulp.task('html', function() {
  * Babel
  */
 gulp.task('babel', function() {
-	return gulp.src('./app/*.js')
-	.pipe(plumber())
-	.pipe(babel({
-		presets: ['es2015']
-	}))
-	.pipe(gulp.dest('./dist'));
+	return gulp.src('./app/main.js')
+		.pipe(plumber())
+		.pipe(babel({
+			presets: ['es2015']
+		}))
+		.pipe(gulp.dest('./dist'));
 });
 
 /*
@@ -67,4 +56,4 @@ gulp.task('uglify', function() {
 /*
  * デフォルトタスク
  */
-gulp.task('default', ['webserver', 'connect', 'babel', 'watch']);
+gulp.task('default', ['webserver', 'babel', 'watch']);

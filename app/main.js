@@ -688,7 +688,7 @@ window.onload = function() {
 				}
 			}
 
-			// 弾と敵の衝突判定
+			// 弾と敵の衝突判定　　
 			for (var i = 0,len = enemyList.length; i < len; i++) {
 				var enemy = enemyList[i];
 				for (var j = 0,len2 = bulletList.length; j < len2; j++) {
