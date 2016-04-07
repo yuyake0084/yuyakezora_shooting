@@ -12,9 +12,10 @@ var uglify = require('gulp-uglify');
 gulp.task('serve', () => {
 	browserSync({
 		server: {
-			baseDir: './shooting/**/*.js'
+			baseDir: './shooting/*'
 		}
 	});
+	gulp.watch(['./**/'], reload);
 });
 
 /*
@@ -47,7 +48,7 @@ gulp.task('babel', () => {
  * ファイルの変更を監視
  */
 gulp.task('watch', () => {
-	gulp.watch(src, './*.js', './*.html', ['babel']);
+	gulp.watch('./**/*.js', ['babel']);
 });
 
 /*
@@ -58,4 +59,4 @@ gulp.task('uglify', () => {
 });
 
 
-gulp.task('default', ['connect', 'babel', 'watch']);
+gulp.task('default', ['serve', 'connect', 'babel', 'watch']);

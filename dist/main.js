@@ -23,12 +23,16 @@ var ENEMY_HEIGHT = 32;
 var ENEMY_SPEED = 0.5;
 var ENEMY_CREATE_INTERVAL = 5;
 
-// 銃弾
+/*
+ * 銃弾
+ */
 var BULLET_WIDTH = 16;
 var BULLET_HEIGHT = 16;
 var BULLET_SPEED = 10;
 
-// 敵の攻撃
+/*
+ * 敵の攻撃
+ */
 var FIRE_WIDTH = 16;
 var FIRE_HEIGHT = 16;
 var FIRE_SPEED = 10;
@@ -73,10 +77,6 @@ var PAD = 'http://yuyake0084.sakura.ne.jp/wp/wp-content/themes/theme-yuyakezora/
  */
 var ASSETS = [START_IMAGE, END_IMAGE, CLEAR_IMAGE, MAP_IMAGE01, BULLET_IMAGE, PLAYER_IMAGE, ENEMY_IMAGE01, FIRE_IMAGE, LIFE_IMAGE, PAD, BATTLE_BGM, EXPLOSION_IMAGE, PLAYER_BULLET_BGM, GAMEOVER_BGM, DAMAGE_BGM];
 
-/*
-* グローバル変数
-*/
-
 var game = null;
 var player = null;
 var bulletList = null;
@@ -85,9 +85,9 @@ var fireList = null;
 
 // Array 拡張
 Array.prototype.erase = function (elm) {
-	var index = undefined.indexOf(elm);
-	undefined.splice(index, 1);
-	return undefined;
+	var index = this.indexOf(elm);
+	this.splice(index, 1);
+	return this;
 };
 
 // ランダム値生成
@@ -118,15 +118,14 @@ var gamepad = navigator.getGamepads && navigator.getGamepads()[0];
 window.onload = function () {
 
 	/*
- 　　* 汎用処理
-     */
+  * 汎用処理
+  */
 	enchant.Sound.enabledInMobileSafari = true;
 	/*
   * ゲームオーバー処理
   */
 	function GameOver() {
-		var pushScore = function pushScore() {
-			document.cookie = 'hoge = game.score';
+		(function () {
 			$.ajax({
 				type: 'POST',
 				dataType: 'json',
@@ -140,8 +139,7 @@ window.onload = function () {
 			}).fail(function (XMLHttpRequest, textStatus, errorThrown) {
 				errorLog();
 			});
-		};
-		pushScore();
+		});
 		var pageMove = function pageMove() {
 			location.href = 'http://yuyake0084.sakura.ne.jp/wp/?page_id=372';
 		};
@@ -162,11 +160,11 @@ window.onload = function () {
 	game.fps = 60;
 	game.onload = function () {
 		var input = [];
-		konami = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65 || gamepad.buttons[1].pressed];
+		var konami = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65];
 		$(window).keyup(function (e) {
 			input.push(e.keyCode);
-			if (input.toString().indexOf(konami) >= 0) {
-				var PLAYER_SPEED = 15;
+			if (input.toString().indexOf(konami) >= 0 || gamepad.buttons[1].pressed) {
+				var _PLAYER_SPEED = 15;
 				game.fps = 10;
 			}
 		});
@@ -201,8 +199,8 @@ window.onload = function () {
 		}
 
 		/*
-  * プレイヤークラス
-  */
+   * プレイヤークラス
+   */
 		var Player = Class.create(Sprite, {
 			initialize: function initialize(x, y) {
 				Sprite.call(this, PLAYER_WIDTH, PLAYER_HEIGHT);
@@ -214,6 +212,7 @@ window.onload = function () {
 					var input = game.input;
 					var vx = 0,
 					    vy = 0;
+
 					pad.frame = 1;
 					this.frame = this.direction * 3 + this.walk;
 					if (gamepad) {

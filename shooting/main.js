@@ -21,12 +21,16 @@ const ENEMY_HEIGHT = 32;
 const ENEMY_SPEED = 0.5;
 const ENEMY_CREATE_INTERVAL = 5;
 
-// 銃弾
+/*
+ * 銃弾
+ */
 const BULLET_WIDTH = 16;
 const BULLET_HEIGHT = 16;
 const BULLET_SPEED = 10;
 
-// 敵の攻撃
+/*
+ * 敵の攻撃
+ */
 const FIRE_WIDTH = 16;
 const FIRE_HEIGHT = 16;
 const FIRE_SPEED = 10;
@@ -88,14 +92,14 @@ const ASSETS = [
 ];
 
 
-var game = null;
-var player = null;
-var bulletList = null;
-var enemyList = null;
-var fireList = null;
+let game = null;
+let player = null;
+let bulletList = null;
+let enemyList = null;
+let fireList = null;
 
 // Array 拡張
-Array.prototype.erase = (elm) => {
+Array.prototype.erase = function(elm) {
 	var index = this.indexOf(elm);
 	this.splice(index, 1);
 	return this;
@@ -129,15 +133,14 @@ var gamepad = navigator.getGamepads && navigator.getGamepads()[0];
 window.onload = function() {
 
 	/*
-　　　* 汎用処理
-     */
+	 * 汎用処理
+	 */
     enchant.Sound.enabledInMobileSafari = true;
     /*
      * ゲームオーバー処理
      */
 	function GameOver() {
-		var pushScore = function() {
-			document.cookie = 'hoge = game.score';
+		(() => {
 			$.ajax({
 				type: 'POST',
 				dataType: 'json',
@@ -145,17 +148,16 @@ window.onload = function() {
 				data: {
 					score: game.score
 				}
-			}).done(function(data) {
+			}).done((data) => {
 				  console.log("Done!");
 				  console.log(data);
-			}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+			}).fail((XMLHttpRequest, textStatus, errorThrown) => {
 				errorLog();
 			});
-		}
-		pushScore();
+		});
 		var pageMove = function() {
 			location.href = 'http://yuyake0084.sakura.ne.jp/wp/?page_id=372';
-		}
+		};
 		setTimeout(pageMove, 5000);
 	}
 	/*
@@ -167,17 +169,17 @@ window.onload = function() {
        	console.log(textStatus);
 	}
 
-	var game = new Game(SCREEN_WIDTH, SCREEN_HEIGHT);
+	let game = new Game(SCREEN_WIDTH, SCREEN_HEIGHT);
 	game.preload(ASSETS);
 	game.keybind(32, 'space');
 	game.fps = 60;
-	game.onload = function() {
-		var input = [];
-		konami = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65 || gamepad.buttons[1].pressed];
-		$(window).keyup(function(e) {
+	game.onload = () => {
+		let input = [];
+		let konami = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65];
+		$(window).keyup( (e) => {
 			input.push(e.keyCode);
-			if (input.toString().indexOf(konami) >= 0) {
-				var PLAYER_SPEED = 15;
+			if (input.toString().indexOf(konami) >= 0 || gamepad.buttons[1].pressed) {
+				let PLAYER_SPEED = 15;
 				game.fps = 10;
 			}
 		});
@@ -186,8 +188,8 @@ window.onload = function() {
 		 * スコア表示
 		 */
 		game.score = 0;
-		
-		var scoreLabel = new Label();
+
+		let scoreLabel = new Label();
 		scoreLabel.font = "20px Tahoma";
 		scoreLabel.color = "#fff";
 		scoreLabel.x = 20;
@@ -212,8 +214,8 @@ window.onload = function() {
 		}
 
 		/*
-		* プレイヤークラス
-		*/
+		 * プレイヤークラス
+		 */
 		var Player = Class.create(Sprite, {
 			initialize: function(x, y) {
 				Sprite.call(this, PLAYER_WIDTH, PLAYER_HEIGHT);
@@ -222,8 +224,9 @@ window.onload = function() {
 				this.y = y;
 				this.frame = 1;
 				this.on('enterframe', function() {
-					var input = game.input;
-					var vx = 0, vy = 0;
+					let input = game.input;
+					let vx = 0, vy = 0;
+
 					pad.frame = 1;
 					this.frame = this.direction * 3 + this.walk;
 					if (gamepad) {
@@ -282,7 +285,7 @@ window.onload = function() {
 					}
 					// 斜めの移動補正
 					if (vx !== 0 && vy !== 0) {
-						var length = Math.sqrt(vx*vx + vy*vy);
+						var length = Math.sqrt(vx * vx + vy * vy);
 						vx /= length;
 						vy /= length;
 						vx *= PLAYER_SPEED;
