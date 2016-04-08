@@ -13,7 +13,7 @@ const BUTTLE_AREA = 440;
 // プレイヤー
 const PLAYER_WIDTH = 32;
 const PLAYER_HEIGHT = 32;
-const PLAYER_SPEED = 5;
+let PLAYER_SPEED = 5;
 
 // 敵
 const ENEMY_WIDTH = 32;
@@ -100,14 +100,14 @@ let fireList = null;
 
 // Array 拡張
 Array.prototype.erase = function(elm) {
-	var index = this.indexOf(elm);
+	let index = this.indexOf(elm);
 	this.splice(index, 1);
 	return this;
 };
 
 // ランダム値生成
-var randfloat = (min, max) => {
-	return Math.random() * (max-min)+min;
+let randfloat = (min, max) => {
+	return Math.random() * (max-min) + min;
 };
 
 /*
@@ -125,17 +125,23 @@ if(window.GamepadEvent){
 		console.log(e.gamepad);
 	});
 }
-var gamepad = navigator.getGamepads && navigator.getGamepads()[0];
+
+
+let gamepad = navigator.getGamepads && navigator.getGamepads()[0];
+
 
 /*
  * メイン処理
  */
-window.onload = function() {
+window.onload = () => {
+
 
 	/*
 	 * 汎用処理
 	 */
     enchant.Sound.enabledInMobileSafari = true;
+
+
     /*
      * ゲームオーバー処理
      */
@@ -154,12 +160,15 @@ window.onload = function() {
 			}).fail((XMLHttpRequest, textStatus, errorThrown) => {
 				errorLog();
 			});
+			let pageMove = () => {
+				location.href = 'http://yuyake0084.sakura.ne.jp/wp/?page_id=372';
+			};
+			setTimeout(pageMove, 5000);
 		});
-		var pageMove = function() {
-			location.href = 'http://yuyake0084.sakura.ne.jp/wp/?page_id=372';
-		};
-		setTimeout(pageMove, 5000);
 	}
+
+
+
 	/*
 	 * エラーログ表示
 	 */
@@ -169,20 +178,35 @@ window.onload = function() {
        	console.log(textStatus);
 	}
 
+	/*
+	 * 裏技
+	 */
+	function KONAMI() {
+		var GF60 = () => {
+			game.fps = 60;
+		}
+
+		$(window).keyup( (e) => {
+			let input = [];
+			let konami = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65];
+			input.push(e.keyCode);
+			if (input.toString().indexOf(konami) >= 0) {
+				PLAYER_SPEED = 15;
+				game.fps = 10;
+				console.log(game.fps);
+				return;
+ 			}
+		});
+		setTimeout(GF60, 5000);
+		console.log(game.fps);
+	}
+
+
 	let game = new Game(SCREEN_WIDTH, SCREEN_HEIGHT);
 	game.preload(ASSETS);
 	game.keybind(32, 'space');
 	game.fps = 60;
 	game.onload = () => {
-		let input = [];
-		let konami = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65];
-		$(window).keyup( (e) => {
-			input.push(e.keyCode);
-			if (input.toString().indexOf(konami) >= 0) {
-				let PLAYER_SPEED = 15;
-				game.fps = 10;
-			}
-		});
 
 		/*
 		 * スコア表示
@@ -199,13 +223,13 @@ window.onload = function() {
 		/*
 		 * ライフ表示
 		 */
-		var lifeMeter = new Group();
+		let lifeMeter = new Group();
 		lifeMeter.value = 3;
 		lifeMeter.x = 250;
 		lifeMeter.y = 20;
 
-		var life = new Array(lifeMeter.value);
-		for (var i = 1; i <= lifeMeter.value; i++ ){
+		let life = new Array(lifeMeter.value);
+		for (let i = 1; i <= lifeMeter.value; i++ ){
 			life[i] = new Sprite(16,16);
 			life[i].image = game.assets[LIFE_IMAGE];
 			life[i].frame = 10;
@@ -216,86 +240,88 @@ window.onload = function() {
 		/*
 		 * プレイヤークラス
 		 */
-		var Player = Class.create(Sprite, {
+		const Player = Class.create(Sprite, {
 			initialize: function(x, y) {
 				Sprite.call(this, PLAYER_WIDTH, PLAYER_HEIGHT);
 				this.image = game.assets[PLAYER_IMAGE];
 				this.x = x;
 				this.y = y;
 				this.frame = 1;
-				this.on('enterframe', function() {
+				this.on('enterframe', () => {
 					let input = game.input;
 					let vx = 0, vy = 0;
 
 					pad.frame = 1;
 					this.frame = this.direction * 3 + this.walk;
-					if (gamepad) {
+
+					if (!gamepad) {
+						if (input.left) {
+							pad.frame = 1;
+							pad.rotation = 270;
+							this.x -= PLAYER_SPEED;
+							this.frame = this.age % 3 + 9;
+						}
+						if (input.right) {
+							pad.frame = 1;
+							pad.rotation = 90;
+							this.x += PLAYER_SPEED;
+							this.frame = this.age % 3 + 18;
+						}
+						if (input.up) {
+							pad.frame = 1;
+							pad.rotation = 0;
+							this.y -= PLAYER_SPEED;
+							this.frame = this.age% 3 + 27;
+						}
+						if (input.down) {
+							pad.frame = 1;
+							pad.rotation = 180;
+							this.y += PLAYER_SPEED;
+							this.frame = this.age % 3;
+						}
+						if (pad.isTouched) {
+							this.x += pad.vx * PLAYER_SPEED;
+							this.y += padvy * PLAYER_SPEED;
+						}
+					} else {
 						if (gamepad.axes[0] < -0.5) {
 							pad.frame = 1;
 							pad.rotation = 270;
 							this.x -= PLAYER_SPEED;
-							this.frame = this.age%3+9;
+							this.frame = this.age % 3 + 9;
 						}
 						if (gamepad.axes[0] > 0.5) {
 							pad.frame = 1;
 							pad.rotation = 90;
 							this.x += PLAYER_SPEED;
-							this.frame = this.age%3+18;
+							this.frame = this.age % 3 + 18;
 						}
 						if (gamepad.axes[1] < -0.5) {
 							pad.frame = 1;
 							pad.rotation = 0;
 							this.y -= PLAYER_SPEED;
-							this.frame = this.age%3+27;
+							this.frame = this.age % 3 + 27;
 						}
 						if (gamepad.axes[1] > 0.5) {
 							pad.frame = 1;
 							pad.rotation = 180;
 							this.y += PLAYER_SPEED;
-							this.frame = this.age%3;
+							this.frame = this.age % 3;
 						}
-					}
-					if (input.left) {
-						pad.frame = 1;
-						pad.rotation = 270;
-						this.x -= PLAYER_SPEED;
-						this.frame = this.age%3+9;
-					}
-					if (input.right) {
-						pad.frame = 1;
-						pad.rotation = 90;
-						this.x += PLAYER_SPEED;
-						this.frame = this.age%3+18;
-					}
-					if (input.up) {
-						pad.frame = 1;
-						pad.rotation = 0;
-						this.y -= PLAYER_SPEED;
-						this.frame = this.age%3+27;
-					}
-					if (input.down) {
-						pad.frame = 1;
-						pad.rotation = 180;
-						this.y += PLAYER_SPEED;
-						this.frame = this.age%3;
-					}
-					if (pad.isTouched) {
-						this.x += pad.vx * PLAYER_SPEED;
-						this.y += padvy * PLAYER_SPEED;
 					}
 					// 斜めの移動補正
 					if (vx !== 0 && vy !== 0) {
-						var length = Math.sqrt(vx * vx + vy * vy);
+						let length = Math.sqrt(vx * vx + vy * vy);
 						vx /= length;
 						vy /= length;
 						vx *= PLAYER_SPEED;
 						vy *= PLAYER_SPEED;
 					}
 					// 画面からはみ出さないさないように制御
-					var left = 0;
-					var right = SCREEN_WIDTH - this.width;
-					var top = 0;
-					var bottom = BUTTLE_AREA - this.height;
+					let left = 0;
+					let right = SCREEN_WIDTH - this.width;
+					let top = 0;
+					let bottom = BUTTLE_AREA - this.height;
 
 					if (this.x < left) this.x = left;
 					else if (this.x > right) this.x = right;
@@ -306,17 +332,17 @@ window.onload = function() {
 		});
 
 		/*
-		* 敵クラス
-		*/
-		var Enemy = Class.create(Sprite, {
-			initialize: function(x, y) {
+		 * 敵クラス
+		 */
+		const Enemy = Class.create(Sprite, {
+			initialize: function(x, y)  {
 				Sprite.call(this,ENEMY_WIDTH, ENEMY_HEIGHT);
 				this.image = game.assets[ENEMY_IMAGE01];
 				this.destroy = false;
 				this.x = x;
 				this.y = y;
 				this.frame = 4;
-				this.time = 0;
+				this.time = 0 ;
 				this.on('enterframe', function() {
 					this.x -= Math.sin(this.age * 0.1);
 					this.y += ENEMY_SPEED;
@@ -328,7 +354,7 @@ window.onload = function() {
 						enemyList.erase(this);
 					}
 					if (this.time++ % 5 == 0) {
-						var s = new Fire(this.x, this.y);
+						let s = new Fire(this.x, this.y);
 					}
 					if (this.y > BUTTLE_AREA) {
 						game.assets[BATTLE_BGM].stop();
@@ -336,7 +362,7 @@ window.onload = function() {
 						game.end();
 
 						if (game.end) {
-							var resultText = new Label('自エリアに侵入されて<br />なんか死にました。<br /><br />5秒後にランキング表に移動します。');
+							let resultText = new Label('自エリアに侵入されて<br />なんか死にました。<br /><br />5秒後にランキング表に移動します。');
 							resultText.moveTo(resultText.width - SCREEN_WIDTH / 2, 360);
 							resultText.color = '#fff';
 							resultText.font = '16px monospace';
@@ -346,10 +372,10 @@ window.onload = function() {
 					}
 
 					// 画面からはみ出さないさないように制御
-					var left = 0;
-					var right = SCREEN_WIDTH - this.width;
-					var top = 0;
-					var bottom = SCREEN_HEIGHT - this.height;
+					let left = 0;
+					let right = SCREEN_WIDTH - this.width;
+					let top = 0;
+					let bottom = SCREEN_HEIGHT - this.height;
 
 					if (this.x < left) this.x = left;
 					else if (this.x > right) this.x = right;
@@ -358,7 +384,7 @@ window.onload = function() {
 
 				// 敵の弾を生成
 				if (game.frame % 1 < 20 && game.frame % 15 == 0) {
-					var fire = new Fire();
+					let fire = new Fire();
 					fire.moveTo(this.x - ENEMY_WIDTH / 2 - FIRE_WIDTH / 2, this.y - 20);
 					fireList.push(fire);
 					game.rootScene.addChild(fire);
@@ -369,14 +395,14 @@ window.onload = function() {
 		/*
 		* 銃弾クラス
 		*/
-		var Bullet = Class.create(Sprite, {
+		const Bullet = Class.create(Sprite, {
 			// 初期化処理
 			initialize: function() {
 				Sprite.call(this, BULLET_WIDTH, BULLET_HEIGHT);
 				this.image = game.assets[BULLET_IMAGE];
 				this.frame = 48;
 				this.destroy = false;
-				this.on('enterframe', function() {
+				this.on('enterframe', () => {
 					this.y -= BULLET_SPEED;
 
 					// 削除処理
@@ -391,7 +417,7 @@ window.onload = function() {
 		/*
 		* 攻撃ボタン
 		*/
-		var attackBtn = {
+		const attackBtn = {
 			normal : {
                 color : '#fff',
                 background: { type: 'linear-gradient', start: '#666', end: '#200c37' },
@@ -407,12 +433,12 @@ window.onload = function() {
                 boxShadow: { offsetX: 2, offsetY: 2, blur: '0', color: 'rgba(0, 0, 0, 0.3)' }
             }
 		};
-		var AttackBtn = new Button('A', attackBtn, 50, 80);
+		const AttackBtn = new Button('A', attackBtn, 50, 80);
 		AttackBtn.x = 220;
 		AttackBtn.y = 440;
 		AttackBtn.font = '25px Ariar';
-		AttackBtn.on('touchstart', function() {
-			var bullet = new Bullet();
+		AttackBtn.on('touchstart', () => {
+			let bullet = new Bullet();
 			bullet.moveTo(player.x + PLAYER_WIDTH / 2 - BULLET_WIDTH / 2, player.y - 10);
 			bulletList.push(bullet);
 			game.assets[PLAYER_BULLET_BGM].clone().play();
@@ -423,14 +449,14 @@ window.onload = function() {
 		/*
 		* 敵の弾クラス
 		*/
-		var Fire = Class.create(Sprite, {
+		const Fire = Class.create(Sprite, {
 			// 初期化処理
 			initialize: function() {
 				Sprite.call(this, FIRE_WIDTH, FIRE_HEIGHT);
 				this.image = game.assets[FIRE_IMAGE];
 				this.frame = 60;
 				this.destroy = false;
-				this.on('enterframe', function() {
+				this.on('enterframe', () => {
 					this.y += FIRE_SPEED;
 
 					if(this.y < -20 || this.destroy === true) {
@@ -451,7 +477,7 @@ window.onload = function() {
 							game.end();
 
 							if (game.end) {
-								var resultText = new Label("撃たれて死にました。<br /><br />5秒後にランキング登録をします。");
+								let resultText = new Label("撃たれて死にました。<br /><br />5秒後にランキング登録をします。");
 								resultText.moveTo(resultText.width - SCREEN_WIDTH / 2, 360);
 								resultText.color = '#fff';
 								resultText.font = '16px monospace';
@@ -467,13 +493,13 @@ window.onload = function() {
 		/*
 		* 爆発クラス
 		*/
-		var Explosion = Class.create(Sprite, {
+		const Explosion = Class.create(Sprite, {
 			initialize: function() {
 				Sprite.call(this, EXPLOSION_WIDTH, EXPLOSION_HEIGHT);
 				this.image = game.assets[EXPLOSION_IMAGE];
 				this.frame = 0;
 				this.scale(2);
-				this.on('enterframe', function() {
+				this.on('enterframe', () => {
 					this.frame += 1;
 
 					if (this.frame > 4) {
@@ -591,29 +617,34 @@ window.onload = function() {
 		}
 		game.rootScene.addChild(map);
 
+
 		/*
 		* プレイヤーを生成
 		*/
-		var player = new Player(SCREEN_WIDTH / 2, 400);
+		let player = new Player(SCREEN_WIDTH / 2, 400);
 		game.rootScene.addChild(player);
+
 
 		/*
 		* 敵リスト
 		*/
 		enemyList = [];
 
+
 		/*
 		* 敵の攻撃リスト
 		*/
 		fireList = [];
 
+
 		/*
 		* パッド生成
 		*/
-		var pad = new Pad();
+		let pad = new Pad();
 		pad.x = 30;
 		pad.y = 420;
 		game.rootScene.addChild(pad);
+
 
 		/*
 		* 銃弾リスト
@@ -623,23 +654,25 @@ window.onload = function() {
 		/* ------------------------------------------------------------
 		* シーン切り替え
 		* ------------------------------------------------------------*/
-		game.rootScene.onenterframe = function() {
+		game.rootScene.on('enterframe', () => {
 			game.assets[BATTLE_BGM].play();
 			game.rootScene.addChild(lifeMeter);
 			game.rootScene.addChild(scoreLabel);
 
-			/*
+			KONAMI();
+
+ 	 		/*
 	  		 * 弾を生成、表示
 	 　　　   */
 			function bulletFire() {
-				var bullet = new Bullet();
+				const bullet = new Bullet();
 				bullet.moveTo(player.x + PLAYER_WIDTH / 2 - BULLET_WIDTH / 2, player.y - 20);
 				bulletList.push(bullet);
 				game.assets[PLAYER_BULLET_BGM].clone().play();
 				game.rootScene.addChild(bullet);
 			}
 
-			var gamepad = navigator.getGamepads && navigator.getGamepads()[0];
+			let gamepad = navigator.getGamepads && navigator.getGamepads()[0];
 
 			if (gamepad) {
 				if (gamepad.buttons[1].pressed) {
@@ -654,17 +687,17 @@ window.onload = function() {
 			 * 敵を生成
 			 */
 			if (game.frame % ENEMY_CREATE_INTERVAL == 0) {
-				var enemy = new Enemy(rand(SCREEN_WIDTH), rand(0));
-				var x = randfloat(0, SCREEN_WIDTH-ENEMY_WIDTH);
-				var y = -20;
+				let enemy = new Enemy(rand(SCREEN_WIDTH), rand(0));
+				let x = randfloat(0, SCREEN_WIDTH-ENEMY_WIDTH);
+				let y = -20;
 				enemy.moveTo(x, y);
 				enemyList.push(enemy);
 				game.rootScene.addChild(enemy);
 			}
 
 			// プレイヤーと敵の衝突判定
-			for (var i = 0,len = enemyList.length; i < len; i++) {
-				var enemy = enemyList[i];
+			for (let i = 0,len = enemyList.length; i < len; i++) {
+				let enemy = enemyList[i];
 				if (enemy.intersect(player)) {
 					lifeMeter.removeChild(life[lifeMeter.value]);
 					lifeMeter.value --;
@@ -689,10 +722,10 @@ window.onload = function() {
 			}
 
 			// 弾と敵の衝突判定　　
-			for (var i = 0,len = enemyList.length; i < len; i++) {
-				var enemy = enemyList[i];
-				for (var j = 0,len2 = bulletList.length; j < len2; j++) {
-					var bullet = bulletList[j];
+			for (let i = 0,len = enemyList.length; i < len; i++) {
+				let enemy = enemyList[i];
+				for (let j = 0,len2 = bulletList.length; j < len2; j++) {
+					let bullet = bulletList[j];
 
 					if (bullet.intersect(enemy) === true) {
 						// 爆発生成
@@ -707,17 +740,12 @@ window.onload = function() {
 						if (enemy.destroy = true) {
 							game.score += 100;
 							scoreLabel.text = "SCORE : " + game.score;
-
-							var GF60 = function() {
-								game.fps = 60;
-							}
-							setTimeout(GF60, 500);
 						}
 						break;
 					}
 				}
 			}
-		};
+		});
 	};
 	game.start();
 };

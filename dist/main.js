@@ -110,6 +110,7 @@ if (window.GamepadEvent) {
 		console.log(e.gamepad);
 	});
 }
+
 var gamepad = navigator.getGamepads && navigator.getGamepads()[0];
 
 /*
@@ -121,6 +122,7 @@ window.onload = function () {
   * 汎用処理
   */
 	enchant.Sound.enabledInMobileSafari = true;
+
 	/*
   * ゲームオーバー処理
   */
@@ -139,12 +141,13 @@ window.onload = function () {
 			}).fail(function (XMLHttpRequest, textStatus, errorThrown) {
 				errorLog();
 			});
+			var pageMove = function pageMove() {
+				location.href = 'http://yuyake0084.sakura.ne.jp/wp/?page_id=372';
+			};
+			setTimeout(pageMove, 5000);
 		});
-		var pageMove = function pageMove() {
-			location.href = 'http://yuyake0084.sakura.ne.jp/wp/?page_id=372';
-		};
-		setTimeout(pageMove, 5000);
 	}
+
 	/*
   * エラーログ表示
   */
@@ -154,20 +157,34 @@ window.onload = function () {
 		console.log(textStatus);
 	}
 
+	/*
+  * 裏技
+  */
+	function KONAMI() {
+		var GF60 = function GF60() {
+			game.fps = 60;
+		};
+
+		$(window).keyup(function (e) {
+			var input = [];
+			var konami = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65];
+			input.push(e.keyCode);
+			if (input.toString().indexOf(konami) >= 0) {
+				PLAYER_SPEED = 15;
+				game.fps = 10;
+				console.log(game.fps);
+				return;
+			}
+		});
+		setTimeout(GF60, 5000);
+		console.log(game.fps);
+	}
+
 	var game = new Game(SCREEN_WIDTH, SCREEN_HEIGHT);
 	game.preload(ASSETS);
 	game.keybind(32, 'space');
 	game.fps = 60;
 	game.onload = function () {
-		var input = [];
-		var konami = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65];
-		$(window).keyup(function (e) {
-			input.push(e.keyCode);
-			if (input.toString().indexOf(konami) >= 0) {
-				var _PLAYER_SPEED = 15;
-				game.fps = 10;
-			}
-		});
 
 		/*
    * スコア表示
@@ -203,6 +220,8 @@ window.onload = function () {
    */
 		var Player = Class.create(Sprite, {
 			initialize: function initialize(x, y) {
+				var _this = this;
+
 				Sprite.call(this, PLAYER_WIDTH, PLAYER_HEIGHT);
 				this.image = game.assets[PLAYER_IMAGE];
 				this.x = x;
@@ -214,60 +233,62 @@ window.onload = function () {
 					    vy = 0;
 
 					pad.frame = 1;
-					this.frame = this.direction * 3 + this.walk;
-					if (gamepad) {
+					_this.frame = _this.direction * 3 + _this.walk;
+
+					if (!gamepad) {
+						if (input.left) {
+							pad.frame = 1;
+							pad.rotation = 270;
+							_this.x -= PLAYER_SPEED;
+							_this.frame = _this.age % 3 + 9;
+						}
+						if (input.right) {
+							pad.frame = 1;
+							pad.rotation = 90;
+							_this.x += PLAYER_SPEED;
+							_this.frame = _this.age % 3 + 18;
+						}
+						if (input.up) {
+							pad.frame = 1;
+							pad.rotation = 0;
+							_this.y -= PLAYER_SPEED;
+							_this.frame = _this.age % 3 + 27;
+						}
+						if (input.down) {
+							pad.frame = 1;
+							pad.rotation = 180;
+							_this.y += PLAYER_SPEED;
+							_this.frame = _this.age % 3;
+						}
+						if (pad.isTouched) {
+							_this.x += pad.vx * PLAYER_SPEED;
+							_this.y += padvy * PLAYER_SPEED;
+						}
+					} else {
 						if (gamepad.axes[0] < -0.5) {
 							pad.frame = 1;
 							pad.rotation = 270;
-							this.x -= PLAYER_SPEED;
-							this.frame = this.age % 3 + 9;
+							_this.x -= PLAYER_SPEED;
+							_this.frame = _this.age % 3 + 9;
 						}
 						if (gamepad.axes[0] > 0.5) {
 							pad.frame = 1;
 							pad.rotation = 90;
-							this.x += PLAYER_SPEED;
-							this.frame = this.age % 3 + 18;
+							_this.x += PLAYER_SPEED;
+							_this.frame = _this.age % 3 + 18;
 						}
 						if (gamepad.axes[1] < -0.5) {
 							pad.frame = 1;
 							pad.rotation = 0;
-							this.y -= PLAYER_SPEED;
-							this.frame = this.age % 3 + 27;
+							_this.y -= PLAYER_SPEED;
+							_this.frame = _this.age % 3 + 27;
 						}
 						if (gamepad.axes[1] > 0.5) {
 							pad.frame = 1;
 							pad.rotation = 180;
-							this.y += PLAYER_SPEED;
-							this.frame = this.age % 3;
+							_this.y += PLAYER_SPEED;
+							_this.frame = _this.age % 3;
 						}
-					}
-					if (input.left) {
-						pad.frame = 1;
-						pad.rotation = 270;
-						this.x -= PLAYER_SPEED;
-						this.frame = this.age % 3 + 9;
-					}
-					if (input.right) {
-						pad.frame = 1;
-						pad.rotation = 90;
-						this.x += PLAYER_SPEED;
-						this.frame = this.age % 3 + 18;
-					}
-					if (input.up) {
-						pad.frame = 1;
-						pad.rotation = 0;
-						this.y -= PLAYER_SPEED;
-						this.frame = this.age % 3 + 27;
-					}
-					if (input.down) {
-						pad.frame = 1;
-						pad.rotation = 180;
-						this.y += PLAYER_SPEED;
-						this.frame = this.age % 3;
-					}
-					if (pad.isTouched) {
-						this.x += pad.vx * PLAYER_SPEED;
-						this.y += padvy * PLAYER_SPEED;
 					}
 					// 斜めの移動補正
 					if (vx !== 0 && vy !== 0) {
@@ -279,19 +300,19 @@ window.onload = function () {
 					}
 					// 画面からはみ出さないさないように制御
 					var left = 0;
-					var right = SCREEN_WIDTH - this.width;
+					var right = SCREEN_WIDTH - _this.width;
 					var top = 0;
-					var bottom = BUTTLE_AREA - this.height;
+					var bottom = BUTTLE_AREA - _this.height;
 
-					if (this.x < left) this.x = left;else if (this.x > right) this.x = right;
-					if (this.y < top) this.y = top;else if (this.y > bottom) this.y = bottom;
+					if (_this.x < left) _this.x = left;else if (_this.x > right) _this.x = right;
+					if (_this.y < top) _this.y = top;else if (_this.y > bottom) _this.y = bottom;
 				});
 			}
 		});
 
 		/*
-  * 敵クラス
-  */
+   * 敵クラス
+   */
 		var Enemy = Class.create(Sprite, {
 			initialize: function initialize(x, y) {
 				Sprite.call(this, ENEMY_WIDTH, ENEMY_HEIGHT);
@@ -355,17 +376,19 @@ window.onload = function () {
 		var Bullet = Class.create(Sprite, {
 			// 初期化処理
 			initialize: function initialize() {
+				var _this2 = this;
+
 				Sprite.call(this, BULLET_WIDTH, BULLET_HEIGHT);
 				this.image = game.assets[BULLET_IMAGE];
 				this.frame = 48;
 				this.destroy = false;
 				this.on('enterframe', function () {
-					this.y -= BULLET_SPEED;
+					_this2.y -= BULLET_SPEED;
 
 					// 削除処理
-					if (this.y < -20 || this.destroy === true) {
-						this.parentNode.removeChild(this);
-						bulletList.erase(this);
+					if (_this2.y < -20 || _this2.destroy === true) {
+						_this2.parentNode.removeChild(_this2);
+						bulletList.erase(_this2);
 					}
 				});
 			}
@@ -409,24 +432,26 @@ window.onload = function () {
 		var Fire = Class.create(Sprite, {
 			// 初期化処理
 			initialize: function initialize() {
+				var _this3 = this;
+
 				Sprite.call(this, FIRE_WIDTH, FIRE_HEIGHT);
 				this.image = game.assets[FIRE_IMAGE];
 				this.frame = 60;
 				this.destroy = false;
 				this.on('enterframe', function () {
-					this.y += FIRE_SPEED;
+					_this3.y += FIRE_SPEED;
 
-					if (this.y < -20 || this.destroy === true) {
-						this.parentNode.removeChild(this);
-						fireList.erase(this);
+					if (_this3.y < -20 || _this3.destroy === true) {
+						_this3.parentNode.removeChild(_this3);
+						fireList.erase(_this3);
 					}
 
 					// 炎呪文がプレイヤーに当たった時の処理
-					if (player.intersect(this, 8)) {
+					if (player.intersect(_this3, 8)) {
 
 						lifeMeter.removeChild(life[lifeMeter.value]);
 						lifeMeter.value--;
-						lifeMeter.parentNode.removeChild(this);
+						lifeMeter.parentNode.removeChild(_this3);
 
 						if (lifeMeter.value === 0) {
 							game.assets[BATTLE_BGM].stop();
@@ -452,15 +477,17 @@ window.onload = function () {
   */
 		var Explosion = Class.create(Sprite, {
 			initialize: function initialize() {
+				var _this4 = this;
+
 				Sprite.call(this, EXPLOSION_WIDTH, EXPLOSION_HEIGHT);
 				this.image = game.assets[EXPLOSION_IMAGE];
 				this.frame = 0;
 				this.scale(2);
 				this.on('enterframe', function () {
-					this.frame += 1;
+					_this4.frame += 1;
 
-					if (this.frame > 4) {
-						this.parentNode.removeChild(this);
+					if (_this4.frame > 4) {
+						_this4.parentNode.removeChild(_this4);
 					}
 				});
 			}
@@ -519,14 +546,16 @@ window.onload = function () {
 		/* ------------------------------------------------------------
   * シーン切り替え
   * ------------------------------------------------------------*/
-		game.rootScene.onenterframe = function () {
+		game.rootScene.on('enterframe', function () {
 			game.assets[BATTLE_BGM].play();
 			game.rootScene.addChild(lifeMeter);
 			game.rootScene.addChild(scoreLabel);
 
+			KONAMI();
+
 			/*
-   		 * 弾を生成、表示
-   　　   */
+    * 弾を生成、表示
+      */
 			function bulletFire() {
 				var bullet = new Bullet();
 				bullet.moveTo(player.x + PLAYER_WIDTH / 2 - BULLET_WIDTH / 2, player.y - 20);
@@ -559,12 +588,12 @@ window.onload = function () {
 			}
 
 			// プレイヤーと敵の衝突判定
-			for (var i = 0, len = enemyList.length; i < len; i++) {
-				var enemy = enemyList[i];
-				if (enemy.intersect(player)) {
+			for (var _i = 0, len = enemyList.length; _i < len; _i++) {
+				var _enemy = enemyList[_i];
+				if (_enemy.intersect(player)) {
 					lifeMeter.removeChild(life[lifeMeter.value]);
 					lifeMeter.value--;
-					enemy.destroy = true;
+					_enemy.destroy = true;
 
 					if (lifeMeter.value === 0) {
 						game.rootScene.onenterframe = null;
@@ -584,36 +613,31 @@ window.onload = function () {
 				}
 			}
 
-			// 弾と敵の衝突判定
-			for (var i = 0, len = enemyList.length; i < len; i++) {
-				var enemy = enemyList[i];
+			// 弾と敵の衝突判定　　
+			for (var _i2 = 0, _len = enemyList.length; _i2 < _len; _i2++) {
+				var _enemy2 = enemyList[_i2];
 				for (var j = 0, len2 = bulletList.length; j < len2; j++) {
 					var bullet = bulletList[j];
 
-					if (bullet.intersect(enemy) === true) {
+					if (bullet.intersect(_enemy2) === true) {
 						// 爆発生成
 						var explosion = new Explosion();
-						explosion.moveTo(enemy.x, enemy.y);
+						explosion.moveTo(_enemy2.x, _enemy2.y);
 						game.rootScene.addChild(explosion);
 
 						game.assets[DAMAGE_BGM].play();
 						bullet.destroy = true;
-						enemy.destroy = true;
+						_enemy2.destroy = true;
 
-						if (enemy.destroy = true) {
+						if (_enemy2.destroy = true) {
 							game.score += 100;
 							scoreLabel.text = "SCORE : " + game.score;
-
-							var GF60 = function GF60() {
-								game.fps = 60;
-							};
-							setTimeout(GF60, 500);
 						}
 						break;
 					}
 				}
 			}
-		};
+		});
 	};
 	game.start();
 };

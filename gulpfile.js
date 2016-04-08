@@ -21,6 +21,7 @@ gulp.task('webserver', function() {
 			open: true
 		})
 	);
+	gulp.watch('./app/main.js', ['babel']);
 });
 
 gulp.task('html', function() {
@@ -43,7 +44,7 @@ gulp.task('babel', function() {
  * ファイルの変更を監視
  */
 gulp.task('watch', function() {
-	gulp.watch('./dist/*.js', ['babel']);
+	gulp.watch('./dist/main.js', ['babel']);
 });
 
 /*
