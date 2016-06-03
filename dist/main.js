@@ -4,10 +4,9 @@
 enchant();
 
 /*
-* 定数
-*/
+ * 定数
+ */
 
-// パラメーター
 var SCREEN_WIDTH = 380;
 var SCREEN_HEIGHT = 550;
 var BUTTLE_AREA = 440;
@@ -207,7 +206,7 @@ window.onload = function () {
 		lifeMeter.y = 20;
 
 		var life = new Array(lifeMeter.value);
-		for (var i = 1; i <= lifeMeter.value; i++) {
+		for (var i = 0; i < lifeMeter.value; i++) {
 			life[i] = new Sprite(16, 16);
 			life[i].image = game.assets[LIFE_IMAGE];
 			life[i].frame = 10;
@@ -229,11 +228,11 @@ window.onload = function () {
 				this.frame = 1;
 				this.on('enterframe', function () {
 					var input = game.input;
-					var vx = 0,
-					    vy = 0;
+					var vx = 0;
+					var vy = 0;
+
 
 					pad.frame = 1;
-					_this.frame = _this.direction * 3 + _this.walk;
 
 					if (!gamepad) {
 						if (input.left) {
@@ -371,8 +370,8 @@ window.onload = function () {
 		});
 
 		/*
-  * 銃弾クラス
-  */
+   * 銃弾クラス
+   */
 		var Bullet = Class.create(Sprite, {
 			// 初期化処理
 			initialize: function initialize() {
@@ -395,8 +394,8 @@ window.onload = function () {
 		});
 
 		/*
-  * 攻撃ボタン
-  */
+   * 攻撃ボタン
+   */
 		var attackBtn = {
 			normal: {
 				color: '#fff',
@@ -446,7 +445,7 @@ window.onload = function () {
 						fireList.erase(_this3);
 					}
 
-					// 炎呪文がプレイヤーに当たった時の処理
+					// 敵の弾がプレイヤーに当たった時の処理
 					if (player.intersect(_this3, 8)) {
 
 						lifeMeter.removeChild(life[lifeMeter.value]);

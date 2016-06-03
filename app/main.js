@@ -2,10 +2,9 @@
 enchant();
 
 /*
-* 定数
-*/
+ * 定数
+ */
 
-// パラメーター
 const SCREEN_WIDTH = 380;
 const SCREEN_HEIGHT= 550;
 const BUTTLE_AREA = 440;
@@ -127,7 +126,7 @@ if(window.GamepadEvent){
 }
 
 
-let gamepad = navigator.getGamepads && navigator.getGamepads()[0];
+const gamepad = navigator.getGamepads && navigator.getGamepads()[0];
 
 
 /*
@@ -154,7 +153,7 @@ window.onload = () => {
 				data: {
 					score: game.score
 				}
-			}).done((data) => {
+			}).done(data => {
 				  console.log("Done!");
 				  console.log(data);
 			}).fail((XMLHttpRequest, textStatus, errorThrown) => {
@@ -168,7 +167,6 @@ window.onload = () => {
 	}
 
 
-
 	/*
 	 * エラーログ表示
 	 */
@@ -177,6 +175,7 @@ window.onload = () => {
 		console.log(XMLHttpRequest.status);
        	console.log(textStatus);
 	}
+
 
 	/*
 	 * 裏技
@@ -229,7 +228,7 @@ window.onload = () => {
 		lifeMeter.y = 20;
 
 		let life = new Array(lifeMeter.value);
-		for (let i = 1; i <= lifeMeter.value; i++ ){
+		for (let i = 0; i < lifeMeter.value; i++ ){
 			life[i] = new Sprite(16,16);
 			life[i].image = game.assets[LIFE_IMAGE];
 			life[i].frame = 10;
@@ -249,10 +248,9 @@ window.onload = () => {
 				this.frame = 1;
 				this.on('enterframe', () => {
 					let input = game.input;
-					let vx = 0, vy = 0;
+					let [vx, vy] = [0, 0];
 
 					pad.frame = 1;
-					this.frame = this.direction * 3 + this.walk;
 
 					if (!gamepad) {
 						if (input.left) {
@@ -393,8 +391,8 @@ window.onload = () => {
 		});
 
 		/*
-		* 銃弾クラス
-		*/
+		 * 銃弾クラス
+		 */
 		const Bullet = Class.create(Sprite, {
 			// 初期化処理
 			initialize: function() {
@@ -415,8 +413,8 @@ window.onload = () => {
 		});
 
 		/*
-		* 攻撃ボタン
-		*/
+		 * 攻撃ボタン
+		 */
 		const attackBtn = {
 			normal : {
                 color : '#fff',
@@ -464,7 +462,7 @@ window.onload = () => {
 						fireList.erase(this);
 					}
 
-					// 炎呪文がプレイヤーに当たった時の処理
+					// 敵の弾がプレイヤーに当たった時の処理
 					if (player.intersect(this, 8)) {
 
 						lifeMeter.removeChild(life[lifeMeter.value]);
